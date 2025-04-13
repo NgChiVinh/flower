@@ -149,41 +149,114 @@ export default function HomePage() {
     </Grid>
   </Grid>
 </Container>
+{/* Best Sellers Section */}
+<Box sx={{ mt: 10, mb: 10 }}>
+  <Container>
+    <Grid container spacing={4} alignItems="center">
+      <Grid item xs={12} md={6}>
+        <Box sx={{ position: "relative", height: 1000 }}>
+          <Image
+            src="/images/bestsellers.jpg"
+            alt="Sale Banner"
+            fill
+            style={{ objectFit: "contain" }}
+          />
+          <Typography
+            variant="h2"
+            fontWeight="bold"
+            sx={{
+              position: "absolute",
+              top: "35%",
+              left: "16%",
+              color: "#ec407a",
+              backgroundColor: "",
+              padding: "10px 20px",
+              fontFamily: "cursive",
+            }}
+          >
+            Best sellers collection
+          </Typography>
+        </Box>
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Grid container spacing={2}>
+          {products.slice(0, 4).map((product) => (
+            <Grid item xs={6} key={product.id}>
+              <ProductCard product={product} addToCart={addToCart} />
+            </Grid>
+          ))}
+        </Grid>
+      </Grid>
+    </Grid>
+  </Container>
+</Box>
+
          
-<Container sx={{ mt: 10, mb: 10 }}>
-  <Typography variant="h4" align="center" fontWeight="bold" color="" sx={{ mb: 5 }}>
-    Vì sao nên chọn Floral Haven?
-  </Typography>
-  <Grid container spacing={4} justifyContent="center">
-    <Grid item xs={12} md={4} textAlign="center">
-      <LocalFloristIcon sx={{ fontSize: 60, color: "#ec407a", mb: 2 }} />
-      <Typography variant="h6" fontWeight="bold">Hoa tươi mỗi ngày</Typography>
-      <Typography color="text.secondary">
-        Chúng tôi cam kết cung cấp những đóa hoa tươi mới, được tuyển chọn kỹ lưỡng hàng ngày.
-      </Typography>
-    </Grid>
-
-    <Grid item xs={12} md={4} textAlign="center">
-      <LocalShippingIcon sx={{ fontSize: 60, color: "#ab47bc", mb: 2 }} />
-      <Typography variant="h6" fontWeight="bold">Giao nhanh 1 giờ</Typography>
-      <Typography color="text.secondary">
-        Dịch vụ giao hàng siêu tốc, đảm bảo hoa đến tay bạn trong thời gian ngắn nhất.
-      </Typography>
-    </Grid>
-
-    <Grid item xs={12} md={4} textAlign="center">
-      <DesignServicesIcon sx={{ fontSize: 60, color: "#8e24aa", mb: 2 }} />
-      <Typography variant="h6" fontWeight="bold">Thiết kế theo yêu cầu</Typography>
-      <Typography color="text.secondary">
-        Đội ngũ chuyên nghiệp sẵn sàng tạo nên bó hoa theo ý tưởng riêng của bạn.
-      </Typography>
-    </Grid>
-  </Grid>
-</Container>
+      {/* Vì sao nên chọn Floral Haven - With background & overlay */}
+      <Box
+        sx={{
+          backgroundImage: 'url("/images/bgr1.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+          py: 10,
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
+            zIndex: 0,
+          }}
+        />
+        <Container sx={{ position: "relative", zIndex: 1 }}>
+          <Typography
+            variant="h4"
+            align="center"
+            fontWeight="bold"
+            sx={{ mb: 5, color: "#8e24aa" }}
+          >
+            Vì sao nên chọn Floral Haven?
+          </Typography>
+          <Grid container spacing={4} justifyContent="center">
+            <Grid item xs={12} md={4} textAlign="center">
+              <LocalFloristIcon sx={{ fontSize: 60, color: "#ec407a", mb: 2 }} />
+              <Typography variant="h6" fontWeight="bold">
+                Hoa tươi mỗi ngày
+              </Typography>
+              <Typography color="text.secondary">
+                Chúng tôi cam kết cung cấp những đóa hoa tươi mới, được tuyển chọn kỹ lưỡng hàng ngày.
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={4} textAlign="center">
+              <LocalShippingIcon sx={{ fontSize: 60, color: "#ab47bc", mb: 2 }} />
+              <Typography variant="h6" fontWeight="bold">
+                Giao nhanh 1 giờ
+              </Typography>
+              <Typography color="text.secondary">
+                Dịch vụ giao hàng siêu tốc, đảm bảo hoa đến tay bạn trong thời gian ngắn nhất.
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={4} textAlign="center">
+              <DesignServicesIcon sx={{ fontSize: 60, color: "#8e24aa", mb: 2 }} />
+              <Typography variant="h6" fontWeight="bold">
+                Thiết kế theo yêu cầu
+              </Typography>
+              <Typography color="text.secondary">
+                Đội ngũ chuyên nghiệp sẵn sàng tạo nên bó hoa theo ý tưởng riêng của bạn.
+              </Typography>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
 
 
       {/* Danh sách sản phẩm */}
-      <Container sx={{ mt: 6 }}>
+      {/* <Container sx={{ mt: 6 }}>
       <Typography variant="h4" align="center" fontWeight="bold" color="" sx={{ mb: 5 }}>
     Danh sách sản phẩm 
     </Typography>
@@ -194,7 +267,7 @@ export default function HomePage() {
             </Grid>
           ))}
         </Grid>
-      </Container>
+      </Container> */}
       {/* Đánh giá khách hàng */}
 <Container sx={{ mt: 10, mb: 10 }}>
   <Typography
@@ -265,6 +338,7 @@ export default function HomePage() {
       </Grid>
     ))}
   </Grid>
+  
 </Container>
 
     </>

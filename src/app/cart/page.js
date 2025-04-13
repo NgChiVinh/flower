@@ -166,9 +166,17 @@ export default function CartPage() {
             <Typography variant="h6">{calculateTotal().toLocaleString()} VND</Typography>
           </Box>
 
-          <Button variant="contained" color="primary" fullWidth sx={{ py: 1.5 }}>
-            Tiến hành thanh toán
+          <Button
+          component={Link}
+          href="/checkout"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ py: 1.5 }}
+          >
+          Tiến hành thanh toán
           </Button>
+
         </>
       )}
     </Container>

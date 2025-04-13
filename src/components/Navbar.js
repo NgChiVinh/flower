@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";  // Import useRouter
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   AppBar,
@@ -13,24 +13,26 @@ import {
   Menu,
   MenuItem,
   Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function Navbar({ cartCount }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const router = useRouter();  // Khai báo useRouter để sử dụng cho điều hướng
+  const [userInitial, setUserInitial] = useState("");
+  const router = useRouter();
 
-  // Kiểm tra trạng thái đăng nhập
   useEffect(() => {
     const checkLoginStatus = () => {
-      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const email = localStorage.getItem("userEmail") || "";
+      setIsLoggedIn(loggedIn);
+      setUserInitial(email ? email.charAt(0).toUpperCase() : "");
     };
+
     checkLoginStatus();
     window.addEventListener("storage", checkLoginStatus);
     return () => window.removeEventListener("storage", checkLoginStatus);
@@ -49,13 +51,16 @@ export default function Navbar({ cartCount }) {
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userEmail");
     setIsLoggedIn(false);
     setAnchorEl(null);
+    window.dispatchEvent(new Event("storage"));
+    router.push("/"); // chuyển về trang chủ
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "white", boxShadow: "none", padding: "15px 0" }}>
-      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: "80px" }}>
+    <AppBar position="static" sx={{ backgroundColor: "white", boxShadow: "none", py: 2 }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* Logo */}
         <Link href="/" passHref>
           <img src="/images/logo.png" alt="Logo" style={{ height: "60px", cursor: "pointer" }} />
@@ -77,30 +82,46 @@ export default function Navbar({ cartCount }) {
 
         {/* Icons */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <IconButton color="inherit">
+          <IconButton>
             <SearchIcon sx={{ color: "black" }} />
           </IconButton>
 
-          {/* Nếu đăng nhập, hiển thị Avatar, nếu chưa thì hiển thị nút đăng nhập */}
           {isLoggedIn ? (
-            <>
-              <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-                <Avatar sx={{ width: 32, height: 32 }} />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={() => setAnchorEl(null)}
-              >
-                <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
-              </Menu>
-            </>
-          ) : (
-            // Chuyển hướng tới trang đăng nhập
-            <IconButton onClick={() => router.push("/auth/login")}>
-              <PersonIcon sx={{ color: "black" }} />
-            </IconButton>
-          )}
+  <>
+    <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+      <Avatar
+        sx={{
+          width: 32,
+          height: 32,
+          bgcolor: "#f48fb1",
+          color: "white",
+          fontWeight: "bold",
+        }}
+      >
+        {userInitial}
+      </Avatar>
+    </IconButton>
+    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+      <MenuItem
+        onClick={() => {
+          router.push("/orders");
+          setAnchorEl(null);
+        }}
+      >
+        Đơn hàng của tôi
+      </MenuItem>
+      <MenuItem onClick={handleLogout}>
+        <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
+        Đăng xuất
+        </MenuItem>
+      </Menu>
+      </>
+      ) : (
+      <IconButton onClick={() => router.push("/auth/login")}>
+      <PersonIcon sx={{ color: "black" }} />
+      </IconButton>
+)}
+
 
           {/* Giỏ hàng */}
           <IconButton color="inherit">

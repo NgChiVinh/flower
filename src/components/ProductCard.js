@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Card, CardContent, Typography, Box, IconButton } from "@mui/material";
+import { CardContent, Typography, Box, IconButton } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -10,27 +10,50 @@ export default function ProductCard({ product, addToCart }) {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Card
+    <Box
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       sx={{
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: "12px",
         cursor: "pointer",
+        textAlign: "center",
+        backgroundColor: "white",
+        padding: 2,
+        maxWidth: 300,
+        margin: "0 auto",
+        position: "relative"
       }}
     >
+      {/* SALE badge */}
+      {product.discount && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            backgroundColor: "#D32F2F",
+            color: "white",
+            padding: "2px 8px",
+            fontSize: 12,
+            fontWeight: "bold",
+            borderRadius: "4px",
+            zIndex: 2,
+          }}
+        >
+          SALE
+        </Box>
+      )}
+
       {/* Ảnh sản phẩm */}
-      <Box sx={{ position: "relative", overflow: "hidden", borderRadius: "12px" }}>
+      <Box sx={{ position: "relative", overflow: "hidden" }}>
         <Link href={`/shop/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
           <Image
             src={product.image}
             alt={product.name}
-            width={650}
-            height={350}
+            width={300}
+            height={300}
             style={{
-              borderRadius: "12px",
-              width: "100%",
+              width: "250px",
+              height: "250px",
               objectFit: "cover",
               transition: "transform 0.3s ease-in-out",
             }}
@@ -38,6 +61,7 @@ export default function ProductCard({ product, addToCart }) {
             onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
           />
         </Link>
+
         {/* Hiệu ứng hover với các icon */}
         {hovered && (
           <Box
@@ -47,16 +71,20 @@ export default function ProductCard({ product, addToCart }) {
               left: "50%",
               transform: "translate(-50%, -50%)",
               display: "flex",
-              gap: 5  ,
+              gap: 2,
+              zIndex: 1,
             }}
           >
-            <IconButton sx={{ color: "white", backgroundColor: "rgba(255,255,255,0.3)" }}>
+            <IconButton sx={{ color: "white", backgroundColor: "rgba(255,255,255,0.6)" }}>
               <VisibilityIcon />
             </IconButton>
-            <IconButton sx={{ color: "white", backgroundColor: "rgba(255,255,255,0.3)" }} onClick={() => addToCart(product)}>
+            <IconButton
+              sx={{ color: "white", backgroundColor: "rgba(255,255,255,0.6)" }}
+              onClick={() => addToCart(product)}
+            >
               <ShoppingCartIcon />
             </IconButton>
-            <IconButton sx={{ color: "white", backgroundColor: "rgba(255,255,255,0.3)" }}>
+            <IconButton sx={{ color: "white", backgroundColor: "rgba(255,255,255,0.6)" }}>
               <FavoriteIcon />
             </IconButton>
           </Box>
@@ -64,27 +92,27 @@ export default function ProductCard({ product, addToCart }) {
       </Box>
 
       {/* Thông tin sản phẩm */}
-      <CardContent>
-        <Typography variant="h6" fontWeight="bold">
+      <CardContent sx={{ backgroundColor: "white" }}>
+        <Typography variant="subtitle1" fontWeight="medium" sx={{ textTransform: "capitalize" }}>
           {product.name}
         </Typography>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
           {product.discount ? (
             <>
-              <Typography variant="body1" color="text.secondary" sx={{ textDecoration: "line-through" }}>
-                {product.originalPrice} VND
+              <Typography variant="h8" fontWeight="bold" color="error">
+                {Number(product.price).toLocaleString("vi-VN", { minimumFractionDigits: 0 })} VND
               </Typography>
-              <Typography variant="body1" color="error" fontWeight="bold">
-                {product.price} VND
+              <Typography variant="body2" color="text.secondary" sx={{ textDecoration: "line-through" }}>
+                {Number(product.originalPrice).toLocaleString("vi-VN", { minimumFractionDigits: 0 })} VND
               </Typography>
             </>
           ) : (
-            <Typography variant="body1" color="#388e3c" fontWeight="bold">
-              {product.price} VND
+            <Typography variant="h8" fontWeight="bold">
+              {Number(product.price).toLocaleString("vi-VN", { minimumFractionDigits: 0 })} VND
             </Typography>
           )}
         </Box>
       </CardContent>
-    </Card>
+    </Box>
   );
 }
