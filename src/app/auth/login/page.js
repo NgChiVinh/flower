@@ -3,16 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Box,
-  Button,
-  Typography,
   Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
   Paper,
   InputAdornment,
   IconButton,
   Link as MuiLink,
 } from "@mui/material";
-import InputField from "@/components/ui/InputField";
 import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
 import Visibility from "@mui/icons-material/Visibility";
@@ -22,27 +22,34 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
   const router = useRouter();
 
+  const validateForm = () => {
+    const errors = {};
+    if (!email) {
+      errors.email = "Vui lòng nhập email.";
+    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      errors.email = "Email không hợp lệ.";
+    }
+
+    if (!password) {
+      errors.password = "Vui lòng nhập mật khẩu.";
+    }
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleLogin = () => {
-    if (!email || !password) {
-      setError("Vui lòng nhập email và mật khẩu.");
-      return;
-    }
-  
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      setError("Email không hợp lệ.");
-      return;
-    }
-  
-    // ✅ Lưu trạng thái đăng nhập
+    if (!validateForm()) return;
+
+    // ✅ Giả lập đăng nhập
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("userEmail", email); // 👉 Lưu email để hiện avatar
-    window.dispatchEvent(new Event("storage")); // Cập nhật UI
-  
-    alert("Đăng nhập thành công!(CHƯA CÓ BACKEND NHÉ HƯNG)");
+    localStorage.setItem("userEmail", email);
+    window.dispatchEvent(new Event("storage"));
+
+    alert("Đăng nhập thành công! (CHƯA kết nối backend)");
     router.push("/");
   };
 
@@ -55,99 +62,104 @@ export default function LoginPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 2,
+        p: 2,
       }}
     >
       <Container maxWidth="xs">
         <Paper
           elevation={6}
           sx={{
-            padding: 4,
+            p: 4,
             borderRadius: 4,
             backdropFilter: "blur(10px)",
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
           }}
         >
           <Typography variant="h4" textAlign="center" fontWeight="bold" color="#546e7a">
             Đăng Nhập
           </Typography>
 
-          {error && (
-            <Typography color="error" textAlign="center" mt={1}>
-              {error}
+          <Box mt={3} display="flex" flexDirection="column" gap={2}>
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!errors.email}
+              helperText={errors.email}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            <TextField
+              label="Mật khẩu"
+              type={showPassword ? "text" : "password"}
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={!!errors.password}
+              helperText={errors.password}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            {/* Quên mật khẩu */}
+            <Box textAlign="right">
+              <MuiLink
+                underline="hover"
+                color="secondary"
+                fontSize="0.9rem"
+                sx={{ cursor: "pointer" }}
+                onClick={() => router.push("/auth/forgot-password")}
+              >
+                Quên mật khẩu?
+              </MuiLink>
+            </Box>
+
+            <Button
+              variant="contained"
+              color="secondary"
+              fullWidth
+              onClick={handleLogin}
+              sx={{ borderRadius: 2 }}
+            >
+              Đăng nhập
+            </Button>
+
+            <Typography textAlign="center">
+              Bạn chưa có tài khoản?{" "}
+              <MuiLink
+                color="secondary"
+                fontWeight="bold"
+                underline="hover"
+                sx={{ cursor: "pointer" }}
+                onClick={() => router.push("/auth/register")}
+              >
+                Đăng ký ngay
+              </MuiLink>
             </Typography>
-          )}
-
-          <InputField
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <EmailIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <InputField
-            label="Mật khẩu"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockIcon />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          {/* Quên mật khẩu */}
-          <Box textAlign="right" mt={1}>
-            <MuiLink
-              underline="hover"
-              color="secondary"
-              fontSize="0.9rem"
-              onClick={() => router.push("/auth/forgot-password")}
-              sx={{ cursor: "pointer" }}
-            >
-              Quên mật khẩu?
-            </MuiLink>
           </Box>
-
-          <Button
-            variant="contained"
-            color="secondary"
-            fullWidth
-            onClick={handleLogin}
-            sx={{ mt: 2, borderRadius: 2 }}
-          >
-            Đăng nhập
-          </Button>
-
-          {/* Đăng ký rõ ràng hơn */}
-          <Typography textAlign="center" mt={3}>
-            Bạn chưa có tài khoản?{" "}
-            <MuiLink
-              color="secondary"
-              fontWeight="bold"
-              underline="hover"
-              sx={{ cursor: "pointer" }}
-              onClick={() => router.push("/auth/register")}
-            >
-              Đăng ký ngay
-            </MuiLink>
-          </Typography>
         </Paper>
       </Container>
     </Box>

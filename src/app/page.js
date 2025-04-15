@@ -3,8 +3,8 @@
 import Navbar from "@/components/Navbar";
 import ProductCard from "@/components/ProductCard";
 import { products } from "@/data/products";
-import { Container, Grid, Box, Typography, Button } from "@mui/material";
-import { useState } from "react";
+import { Container, Grid, Box, Typography, Button,} from "@mui/material";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import LocalFloristIcon from "@mui/icons-material/LocalFlorist";
@@ -13,12 +13,27 @@ import DesignServicesIcon from "@mui/icons-material/DesignServices";
 
 
 
+
 export default function HomePage() {
   const [cart, setCart] = useState([]);
 
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(storedCart);
+  }, []);
+
   const addToCart = (product) => {
-    setCart([...cart, product]);
-    alert(`Đã thêm "${product.name}" vào giỏ hàng!`);
+    const existingIndex = cart.findIndex((item) => item.id === product.id);
+    let updatedCart = [...cart];
+
+    if (existingIndex !== -1) {
+      updatedCart[existingIndex].quantity = (updatedCart[existingIndex].quantity || 1) + 1;
+    } else {
+      updatedCart.push({ ...product, quantity: 1 });
+    }
+
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   return (
@@ -80,7 +95,7 @@ export default function HomePage() {
   <Grid container spacing={6} alignItems="center">
     <Grid item xs={12} md={6}>
       <Image
-        src="/images/doahoa.jpg"
+        src="/images/GioiThieu.jpg"
         alt="Giới thiệu Floral Haven"
         width={400}
         height={700}
@@ -190,7 +205,6 @@ export default function HomePage() {
     </Grid>
   </Container>
 </Box>
-
          
       {/* Vì sao nên chọn Floral Haven - With background & overlay */}
       <Box
@@ -340,7 +354,6 @@ export default function HomePage() {
   </Grid>
   
 </Container>
-
     </>
   );
 }
